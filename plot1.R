@@ -10,6 +10,18 @@
 
 #this will be pushed to the other scripts. 
 
+library(lubridate)
+
+RawRead <- read.csv(file = "RawData/household_power_consumption.txt", 
+         sep = ";",
+         header = TRUE,
+         na.strings = "?")
+
 #this particular script will then create a bar graph with red bars, etc. 
 #according to the assignment spec. 
 
+RawRead$Date <- as.Date(RawRead$Date, format = "%d/%m/%Y")
+
+#20180219 1243 DWB this doesn't work, as it 
+#seems to insert todays date before the time. 
+RawRead$Time <- hms::as.hms(RawRead$Time)

@@ -10,7 +10,9 @@
 
 #this will be pushed to the other scripts. 
 
+
 library(lubridate)
+library(sqldf)
 
 RawRead <- read.csv(file = "RawData/household_power_consumption.txt", 
          sep = ";",
@@ -20,8 +22,24 @@ RawRead <- read.csv(file = "RawData/household_power_consumption.txt",
 #this particular script will then create a bar graph with red bars, etc. 
 #according to the assignment spec. 
 
-RawRead$Date <- as.Date(RawRead$Date, format = "%d/%m/%Y")
+#RawRead$Date <- as.Date(RawRead$Date, format = "%d/%m/%Y")
 
-#20180219 1243 DWB this doesn't work, as it 
-#seems to insert todays date before the time. 
-RawRead$Time <- hms::as.hms(RawRead$Time)
+#RawRead$Time <- hms::as.hms(as.character(RawRead$Time))
+
+RawRead$TimeDate <- lubridate::dmy_hms(paste(RawRead$Date, RawRead$Time))
+
+#names(RawRead)
+
+Feb_1_2_PowData <- subset(RawRead,
+                          TimeDate >= "2007-2-1 00:00:01" & TimeDate <= "2007-2-2 23:59:59",
+                          select = c(TimeDate, 
+                                     Global_active_power, 
+                                     Global_reactive_power, 
+                                     Voltage, 
+                                     Global_intensity, 
+                                     Sub_metering_1, 
+                                     Sub_metering_2, 
+                                     Sub_metering_3)
+                          )
+
+hist(Feb_1_2_PowData$Global_active_power)

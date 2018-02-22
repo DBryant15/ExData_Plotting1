@@ -1,22 +1,10 @@
 #this script is intended to recreate plot 2
 
+#read in data and filter
 RawRead <- read.csv(file = "RawData/household_power_consumption.txt", 
                     sep = ";",
                     header = TRUE,
                     na.strings = "?")
-
-#this particular script will then create a bar graph with red bars, etc. 
-#according to the assignment spec. 
-
-#RawRead$Date <- as.Date(RawRead$Date, format = "%d/%m/%Y")
-
-#RawRead$Time <- hms::as.hms(as.character(RawRead$Time))
-
-# RawRead$TimeDate <- lubridate::dmy_hms(
-#   paste(
-#     RawRead$Date,
-#     RawRead$Time)
-#   )
 
 RawRead$TimeDate <- strptime(
   paste(
@@ -25,23 +13,20 @@ RawRead$TimeDate <- strptime(
   format = "%d/%m/%Y %H:%M:%S"
 )
 
-#RawRead$TimeDate2 <- as.POSIXlt(RawRead$TimeDate)
-
-#names(RawRead)
-
 Feb_1_2_PowData <- subset(RawRead,
                           TimeDate >= as.POSIXlt("2007-2-1 00:00:00") 
                           & TimeDate <= as.POSIXlt("2007-2-2 23:59:59")
-                          #,
-                          # select = c(TimeDate, 
-                          #            Global_active_power, 
-                          #            Global_reactive_power, 
-                          #            Voltage, 
-                          #            Global_intensity, 
-                          #            Sub_metering_1, 
-                          #            Sub_metering_2, 
-                          #            Sub_metering_3)
 )
 
+#create plot
+plot(Feb_1_2_PowData$TimeDate, 
+     Feb_1_2_PowData$Global_active_power, 
+     type = "n", 
+     ylab = "Global Active Power (kilowatts)", 
+     xlab = " ")
+lines(Feb_1_2_PowData$TimeDate, Feb_1_2_PowData$Global_active_power)
 
-##TODO: make line plot of of active Global power through these two days  
+#plot this
+dev.copy(png, file = "plot2.png", width = 480, height = 480)
+
+dev.off()
